@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send a file</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            text-align: center;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 300px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        h1 {
+            text-align: center;
+        }
+        #message {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Send a file</h1>
+    <form id="send-form">
+        <input type="file" id="file-input" name="file">
+        <button type="submit">Send</button>
+    </form>
+    <p id="message"></p>
+    <script>
+        const form = document.getElementById('send-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            document.getElementById('message').innerHTML = 'Please wait...';
+            fetch('https://functions.yandexcloud.net/d4ebb53kka3d6b2ui2gp', {
+                method: 'POST',
+                body: formData
+            }).then(async function(response) {
+                url = await response.text();
+                document.getElementById('message').innerHTML = `File saved successfully at <a href="${url}">${url}<a>`;
+                console.log(response);
+            }).catch(function(error) {
+                document.getElementById('message').innerHTML = `Error: ${error}`;
+                console.log(error);
+            });
+        });
+    </script>
+</body>
+</html>
